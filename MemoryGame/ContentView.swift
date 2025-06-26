@@ -14,7 +14,7 @@ struct ContentView: View {
                     Text("Memory Game")
                         .font(.largeTitle)
                     Spacer()
-                    Text("Time: \(viewModel.timeRemaining)")
+                    Text(String(format: "Time: %.2f", viewModel.timeRemaining))
                         .font(.title)
                         .foregroundColor(viewModel.timeRemaining <= 10 ? .red : .black)
                 }
