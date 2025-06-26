@@ -5,12 +5,20 @@ struct ContentView: View {
     @ObservedObject var viewModel: MemoryGameViewModel
     @State private var showCongratulations = false
     @State private var scale: CGFloat = 1.0
+    @State private var gameOverScale: CGFloat = 0.1
 
     var body: some View {
         ZStack {
             VStack {
-                Text("Memory Game")
-                    .font(.largeTitle)
+                HStack {
+                    Text("Memory Game")
+                        .font(.largeTitle)
+                    Spacer()
+                    Text("Time: \(viewModel.timeRemaining)")
+                        .font(.title)
+                        .foregroundColor(viewModel.timeRemaining <= 10 ? .red : .black)
+                }
+                .padding(.horizontal)
                 Spacer()
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
                     ForEach(viewModel.cards) { card in
@@ -61,6 +69,38 @@ struct ContentView: View {
                             viewModel.restart()
                             showCongratulations = false
                         }
+                    }
+                    .font(.title)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding(.bottom)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.black.opacity(0.85))
+                .transition(.opacity.combined(with: .scale))
+            }
+
+            if viewModel.isGameOver {
+                VStack {
+                    Spacer()
+                    Text("🤯")
+                        .font(.system(size: 500))
+                        .scaleEffect(gameOverScale)
+                        .onAppear {
+                            withAnimation(.interpolatingSpring(stiffness: 50, damping: 8).speed(0.5)) {
+                                gameOverScale = 1.0
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                withAnimation(.easeOut(duration: 1.0)) {
+                                    gameOverScale = 0.0
+                                }
+                            }
+                        }
+                    Spacer()
+                    Button("Play Again") {
+                        viewModel.restart()
                     }
                     .font(.title)
                     .padding()
