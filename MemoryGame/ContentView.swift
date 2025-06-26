@@ -16,6 +16,7 @@ struct ContentView: View {
                     Spacer()
                     Text(String(format: "Time: %.2f", viewModel.timeRemaining))
                         .font(.title)
+                        .fontDesign(.monospaced)
                         .foregroundColor(viewModel.timeRemaining <= 10 ? .red : .black)
                 }
                 .padding(.horizontal)
@@ -83,35 +84,37 @@ struct ContentView: View {
             }
 
             if viewModel.isGameOver {
-                VStack {
-                    Spacer()
-                    Text("🤯")
-                        .font(.system(size: 500))
-                        .scaleEffect(gameOverScale)
-                        .onAppear {
-                            withAnimation(.interpolatingSpring(stiffness: 50, damping: 8).speed(0.5)) {
-                                gameOverScale = 1.0
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                withAnimation(.easeOut(duration: 1.0)) {
-                                    gameOverScale = 0.0
+                GeometryReader { geometry in
+                    VStack {
+                        Spacer()
+                        Text("🤯")
+                            .font(.system(size: min(geometry.size.width, geometry.size.height) * 0.8))
+                            .scaleEffect(gameOverScale)
+                            .onAppear {
+                                withAnimation(.interpolatingSpring(stiffness: 50, damping: 8).speed(0.5)) {
+                                    gameOverScale = 1.0
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    withAnimation(.easeOut(duration: 1.0)) {
+                                        gameOverScale = 0.0
+                                    }
                                 }
                             }
+                        Spacer()
+                        Button("Play Again") {
+                            viewModel.restart()
                         }
-                    Spacer()
-                    Button("Play Again") {
-                        viewModel.restart()
+                        .font(.title)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .padding(.bottom)
                     }
-                    .font(.title)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    .padding(.bottom)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black.opacity(0.85))
+                    .transition(.opacity.combined(with: .scale))
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.black.opacity(0.85))
-                .transition(.opacity.combined(with: .scale))
             }
         }
     }
