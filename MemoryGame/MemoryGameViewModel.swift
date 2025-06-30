@@ -7,7 +7,7 @@ class MemoryGameViewModel: ObservableObject {
     static let emojis = ["👻", "🎃", "🕷️", "😈", "💀", "🕸️", "🧙", "🙀", "👹", "😱", "☠️", "🍭"]
 
     static func createMemoryGame() -> MemoryGame<String> {
-        MemoryGame<String>(numberOfPairsOfCards: 12) { pairIndex in
+        MemoryGame<String>(numberOfPairsOfCards: emojis.count) { pairIndex in
             emojis[pairIndex]
         }
     }
